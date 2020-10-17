@@ -38,9 +38,9 @@ jobs:
         uses: naiw1023/notify-telegram@v0.0.5
         with:
           # Chat to send: chat id or @channel_name
-          chat: @EvoSwarm-Modificaciones
+          chat: ${{ secrets.TELEGRAM_ID_OR_CHANNEL }}
           # Telegram Bot token
-          token: 1348987447:AAF4nrE04CZGhsAP9VTd5_foikIO9ijx5_w
+          token: ${{ secrets.TELEGRAM_TOKEN }}
           # Job status
           status: Online
           # Custom message

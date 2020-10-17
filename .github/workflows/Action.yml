@@ -38,7 +38,7 @@ jobs:
         uses: naiw1023/notify-telegram@v0.0.5
         with:
           # Chat to send: chat id or @channel_name
-          chat: ${{ secrets.TELEGRAM_ID_OR_CHANNEL }}
+          chat: ${{ secrets.TELEGRAM_TO }}
           # Telegram Bot token
           token: ${{ secrets.TELEGRAM_TOKEN }}
           # Job status

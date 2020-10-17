@@ -1,0 +1,181 @@
+version: '3'
+services:
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+  setup:
+    build: './setup'
+    depends_on:
+      - redis
+    volumes:
+      - ./setup:/code
+    command: python experiment.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+
+  controller:
+    build: './controller'
+    depends_on:
+      - redis
+    volumes:
+      - ./controller:/code
+    command: python controller.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+
+
+  worker:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+
+  worker1:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker2:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker3:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  
+  worker4:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker5:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker6:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker7:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker8:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+  worker9:
+    build: './worker'
+    depends_on:
+      - redis
+    volumes:
+      - ./worker:/code
+    command: python main.py
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+
+
+  
+
+  
+  # elasticsearch:
+  #   labels:
+  #     com.example.service: "elasticsearch"
+  #     com.example.description: "For searching and indexing data"
+  #   build: './elasticsearch'
+  #   container_name: elasticsearch
+  #   volumes:
+  #     - ./esdata:/usr/share/elasticsearch/data/
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   environment:
+  #     discovery.type : single-node
+
+  # logstash:
+  #   labels:
+  #     com.example.service: "logstash"
+  #     com.example.description: "For logging data"
+  #   image: logstash:7.1.0
+  #   container_name: log
+  #   environment:
+  #     xpack.monitoring.enabled: "true"
+  #     xpack.monitoring.elasticsearch.url: http://elasticsearch:9200
+  #   volumes:
+  #     - ./:/logstash_dir
+  #   command: bash -c "logstash -f /logstash_dir/logstash.conf && bin/logstash-plugin install logstash-input-redis --no-verify"
+  #   depends_on:
+  #     - elasticsearch
+  #     - redis
+  #   ports:
+  #     - "5959:5959"
+ 
+  # kibana:
+  #   labels:
+  #     com.example.service: "kibana"
+  #     com.example.description: "Data visualisation and for log aggregation"
+  #   image: kibana:7.1.0
+  #   container_name: kibana
+  #   ports:
+  #     - "5601:5601"
+  #   environment:
+  #     ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+  #   depends_on:
+  #     - elasticsearch

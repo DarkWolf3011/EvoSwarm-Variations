@@ -4,7 +4,7 @@ import pandas as pd
 # First we must state if the jsonfile has lines
 LINES = True
 
-in_file = r'C:\F4_30\aws_8\swarm_ea_aws.json'
+in_file = r'C:\users\josed\documents\github\EvoSwarm-Variations\M2.json'
 out_file = None
 
 
@@ -21,7 +21,7 @@ if LINES:
                        'message_counter', 'message_id', 'params', 'worker_id', 'benchmark'], axis=1)
 
             data['num_evals'] = [sum(map(lambda r: r['num_of_evals'], row)) for row in data.evals]
-            data.to_csv(out_file, index=False, header=False, mode='a', columns = [ 'dim', 'instance', 'time_stamp', 'num_evals'] )
+            data.to_csv(out_file, index=False, header=False, mode='a', columns = [ 'dim', 'instance', 'best_score', 'benchmark'] )
 
 else:
     data = pd.read_json(in_file)
@@ -30,4 +30,4 @@ else:
     #        'message_counter', 'message_id', 'params', 'worker_id','benchmark'], axis = 1 )#\
 
     data['num_evals'] = [sum(map(lambda r: r['num_of_evals'], row)) for row in data.evals]
-    data.to_csv(out_file, index=False, header=False, mode='a', columns = [ 'dim', 'instance', 'time_stamp', 'num_evals'] )
+    data.to_csv(out_file, index=False, header=False, mode='a', columns = [ 'dim', 'instance', 'best_score', 'benchmark'] )

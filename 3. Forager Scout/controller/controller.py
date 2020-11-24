@@ -44,7 +44,7 @@ class DockerExperiment():
                                .filter(lambda x: x["problem"]["problem_id"] == self.problem_id) \
                                .take(env["problem"]["max_iterations"]).publish()
             
-        self.valid_messages.buffer_with_count(3)\
+        self.valid_messages.buffer_with_count(8)\
                             .subscribe( on_next=lambda x : self.population_mixer(x), on_completed = self.finish)
 
         self.valid_messages.subscribe(lambda message: self.one_more(message), on_completed = lambda : print("MESSAGES COMPLETED"))
@@ -84,14 +84,14 @@ class DockerExperiment():
         
 
     def population_mixer(self, populations):
-        if len(populations) == 3:
+        if len(populations) == 8:
             print("MIXER:",len(populations))
             #populations = [json.loads(message.data) for message in populations]contr
             #populations[0]['population'] = cxBestFromEach(populations[0]['population'], populations[1]['population'])
             #populations[1]['population'] = cxBestFromEach(populations[1]['population'], populations[2]['population'])
             #populations[2]['population'] = cxBestFromEach(populations[2]['population'], populations[0]['population'])
 
-            populations[0]['population'], populations[1]['population'], populations[2]['population'] = merge_chain_simple(populations[0]['population'], populations[1]['population'],populations[2]['population'])
+            populations[0]['population'], populations[1]['population'], populations[2]['population'], populations[3]['population'], populations[4]['population'], populations[5]['population'], populations[6]['population'], populations[7]['population'] = merge_scoutbee_v1(populations[0]['population'], populations[1]['population'],populations[2]['population'],populations[3]['population'],populations[4]['population'],populations[5]['population'],populations[6]['population'],populations[7]['population'])
 
             #Iteracion hay que saber si sera el unico metodo o necesito otro
             #habra bandera para primera optimizacion?
@@ -103,6 +103,11 @@ class DockerExperiment():
             self.messages.on_next(populations[0])
             self.messages.on_next(populations[1])
             self.messages.on_next(populations[2])
+            self.messages.on_next(populations[3])
+            self.messages.on_next(populations[4])
+            self.messages.on_next(populations[5])
+            self.messages.on_next(populations[6])
+            self.messages.on_next(populations[7])
             
         
     
@@ -178,31 +183,311 @@ def cxBestFromEach(pop1, pop2, key = lambda p: p['fitness']['score']):
     pop1[cxpoint:] = pop2[:cxpoint+2]
     return pop1
 
-def merge_chain_simple(pop1, pop2, pop3, key = lambda p: p['fitness']['score']):
-    pl1 = len(pop1)
-    pl2 = len(pop2)
-    pl3 = len(pop3)
+
+
+def merge_scoutbee_v1(pop1, pop2, pop3, pop4, pop5, pop6, pop7, pop8, key= lambda p: p['fitness']['score']):
+    percernt = int((len(pop1))*(.10))
+    print('--------------------')
+    print('--------------------')
+    print('--------------------')
+    print(percernt)
+    print('--------------------')
+    print('--------------------')
+    print('--------------------')
+    
 
     pop1.sort(key=key)
     pop2.sort(key=key)
     pop3.sort(key=key)
+    pop4.sort(key=key)
+    pop5.sort(key=key)
+    pop6.sort(key=key)
+    pop7.sort(key=key)
+    pop8.sort(key=key)
 
-    aux_p1 = copy.deepcopy(pop1[:10])
-    aux_p2 = copy.deepcopy(pop2[:10])
-    aux_p3 = copy.deepcopy(pop3[:10])
 
-    print('Aqui se copiaron los primero 10 elementos de cada una')
+    aux_p1 = copy.deepcopy(pop1[:percernt])
+    aux_p2 = copy.deepcopy(pop2[:percernt])
+    aux_p3 = copy.deepcopy(pop3[:percernt])
+    aux_p4 = copy.deepcopy(pop4[:percernt])
+    aux_p5 = copy.deepcopy(pop5[:percernt])
+    aux_p6 = copy.deepcopy(pop6[:percernt])
+    aux_p7 = copy.deepcopy(pop7[:percernt])
+    aux_p8 = copy.deepcopy(pop8[:percernt])
 
-    pop1[:10] = aux_p2
-    pop2[:10] = aux_p3
-    pop3[:10] = aux_p1
     
-    print('aqui se combinaron las 3 poblaciones')
+    Apops = [1,2,3,4,5,6,7,8]
+    s1 = [p['fitness']['score'] for p in pop1[:1]]
+    s2 = [p['fitness']['score'] for p in pop2[:1]]
+    s3 = [p['fitness']['score'] for p in pop3[:1]]
+    s4 = [p['fitness']['score'] for p in pop4[:1]]
+    s5 = [p['fitness']['score'] for p in pop5[:1]]
+    s6 = [p['fitness']['score'] for p in pop6[:1]]
+    s7 = [p['fitness']['score'] for p in pop7[:1]]
+    s8 = [p['fitness']['score'] for p in pop8[:1]]
 
-   
-    return (pop1, pop2, pop3)
+    f1 = s1[0]
+    f2 = s2[0]
+    f3 = s3[0]
+    f4 = s4[0]
+    f5 = s5[0]
+    f6 = s6[0]
+    f7 = s7[0]
+    f8 = s8[0]
+    
+    print(''+str(f1)+' '+str(f2)+' '+str(f3)+' '+str(f4)+' '+str(f5)+' '+str(f6)+' '+str(f7)+' '+str(f8))
+    #print(f1[0])
 
+    #Poblacion 1
+    if float(f1) < float(f2) and  2 in Apops:
+        Apops.remove(2)
+        pop1[:percernt] = aux_p2
+    
+    elif float(f1) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop1[:percernt] = aux_p3
 
+    elif float(f1) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop1[:percernt] = aux_p4
+
+    elif float(f1) < float(f5) and 5 in Apops:
+        Apops.remove(5)
+        pop1[:percernt] = aux_p5
+
+    elif float(f1) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop1[:percernt] = aux_p6
+
+    elif float(f1) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop1[:percernt] = aux_p7
+
+    elif float(f1) < float(f8) and 8 in Apops:
+        Apops.remove(8)
+        pop1[:percernt] = aux_p8
+    else:
+        print('Poblacion 1 ya esta op')
+
+    #Poblacion 2
+    if float(f2) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop2[:percernt] = aux_p1
+    
+    elif float(f2) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop2[:percernt] = aux_p3
+
+    elif float(f2) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop2[:percernt] = aux_p4
+
+    elif float(f2) < float(f5) and 5 in Apops:
+        Apops.remove(5)
+        pop2[:percernt] = aux_p5
+
+    elif float(f2) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop2[:percernt] = aux_p6
+
+    elif float(f2) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop2[:percernt] = aux_p7
+
+    elif float(f2) < float(f8) and 8 in Apops:
+        Apops.remove(8)
+        pop2[:percernt] = aux_p8
+    else:
+        print('Poblacion 2 ya esta op')
+
+    #Poblacion 3
+    if float(f3) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop3[:percernt] = aux_p1
+    
+    elif float(f3) < float(f2) and 2 in Apops:
+        Apops.remove(2)
+        pop3[:percernt] = aux_p2
+
+    elif float(f3) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop3[:percernt] = aux_p4
+
+    elif float(f3) < float(f5) and 5 in Apops:
+        Apops.remove(5)
+        pop3[:percernt] = aux_p5
+
+    elif float(f3) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop3[:percernt] = aux_p6
+
+    elif float(f3) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop3[:percernt] = aux_p7
+
+    elif float(f3) < float(f8) and 8 in Apops:
+        Apops.remove(8)
+        pop3[:percernt] = aux_p8
+    else:
+        print('Poblacion 3 ya esta op')
+
+    #Poblacion 4
+    if float(f4) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop4[:percernt] = aux_p1
+    
+    elif float(f4) < float(f2) and 2 in Apops:
+        Apops.remove(2)
+        pop4[:percernt] = aux_p2
+
+    elif float(f4) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop4[:percernt] = aux_p3
+
+    elif float(f4) < float(f4) and 5 in Apops:
+        Apops.remove(5)
+        pop4[:percernt] = aux_p5
+
+    elif float(f4) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop4[:percernt] = aux_p6
+
+    elif float(f4) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop4[:percernt] = aux_p7
+
+    elif float(f4) < float(f8) and 8 in Apops:
+        Apops.remove(8)
+        pop4[:percernt] = aux_p8
+    else:
+        print('Poblacion 4 ya esta op')
+
+    #Poblacion 5
+    if float(f5) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop5[:percernt] = aux_p1
+    
+    elif float(f5) < float(f2) and 2 in Apops:
+        Apops.remove(2)
+        pop5[:percernt] = aux_p2
+
+    elif float(f5) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop5[:percernt] = aux_p3
+
+    elif float(f5) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop5[:percernt] = aux_p4
+
+    elif float(f5) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop5[:percernt] = aux_p6
+
+    elif float(f5) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop5[:percernt] = aux_p7
+
+    elif float(f5) < float(f8) and 8 in Apops:
+        Apops.remove(8)
+        pop5[:percernt] = aux_p8
+    else:
+        print('Poblacion 5 ya esta op')
+
+    #Poblacion 6
+    if float(f6) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop6[:percernt] = aux_p1
+    
+    elif float(f6) < float(f2) and 2 in Apops:
+        Apops.remove(2)
+        pop6[:percernt] = aux_p2
+
+    elif float(f6) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop6[:percernt] = aux_p3
+
+    elif float(f6) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop6[:percernt] = aux_p4
+
+    elif float(f6) < float(f5) and 5 in Apops:
+        Apops.remove(5)
+        pop6[:percernt] = aux_p5
+
+    elif float(f6) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop6[:percernt] = aux_p7
+
+    elif float(f6) < float(f8) and 8 in Apops:
+        Apops.remove(8)
+        pop6[:percernt] = aux_p8
+    else:
+        print('Poblacion 6 ya esta op')
+
+    #Poblacion 7
+    if float(f7) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop7[:percernt] = aux_p1
+    
+    elif float(f7) < float(f2) and 2 in Apops:
+        Apops.remove(2)
+        pop7[:percernt] = aux_p2
+
+    elif float(f7) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop7[:percernt] = aux_p3
+
+    elif float(f7) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop7[:percernt] = aux_p4
+
+    elif float(f7) < float(f5) and 5 in Apops:
+        Apops.remove(5)
+        pop7[:percernt] = aux_p5
+
+    elif float(f7) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop7[:percernt] = aux_p6
+
+    elif float(f7) < float(f7) and 8 in Apops:
+        Apops.remove(8)
+        pop7[:percernt] = aux_p8
+    else:
+        print('Poblacion 7 ya esta op')
+
+    #Poblacion 8
+    if float(f8) < float(f1) and  1 in Apops:
+        Apops.remove(1)
+        pop8[:percernt] = aux_p1
+    
+    elif float(f8) < float(f2) and 2 in Apops:
+        Apops.remove(2)
+        pop8[:percernt] = aux_p2
+
+    elif float(f8) < float(f3) and 3 in Apops:
+        Apops.remove(3)
+        pop8[:percernt] = aux_p3
+
+    elif float(f8) < float(f4) and 4 in Apops:
+        Apops.remove(4)
+        pop8[:percernt] = aux_p4
+
+    elif float(f8) < float(f5) and 5 in Apops:
+        Apops.remove(5)
+        pop8[:percernt] = aux_p5
+
+    elif float(f8) < float(f6) and 6 in Apops:
+        Apops.remove(6)
+        pop8[:percernt] = aux_p6
+
+    elif float(f8) < float(f7) and 7 in Apops:
+        Apops.remove(7)
+        pop8[:percernt] = aux_p7
+    else:
+        print('Poblacion 8 ya esta op')
+
+    #Regreso a casa
+    return(pop1, pop2, pop3, pop4, pop5, pop6, pop7, pop8)
 
 
 

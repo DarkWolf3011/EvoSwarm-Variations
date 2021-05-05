@@ -1,2 +1,2 @@
 # EvoSwarm-Variations
-Modificaciones al metodo de optimizacion basado en eventos EvoSwarms 
+Modifications to the optimization method in the event based achitecture of EvoSwarm.
